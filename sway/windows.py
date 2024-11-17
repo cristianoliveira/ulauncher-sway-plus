@@ -57,7 +57,7 @@ def app_details(con):
     # app_id is wayland only, window_properties is X11 only
     app_name = (con["app_id"]
                 if ("app_id" in con and con["app_id"] != None)
-                else con["window_properties"]["instance"])
+                else con["window_properties"].get("instance", "unknown"))
 
     # (con_id, application name, window title)
     return (con["id"], app_name, con["name"])
