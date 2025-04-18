@@ -13,11 +13,13 @@
       in
       {
         devShells.default = pkgs.mkShell {
-          buildInputs = [
-            pkgs.python3
-            pkgs.python3Packages.pip
-            pkgs.python3Packages.setuptools
-            pkgs.python3Packages.wheel
+          buildInputs = with pkgs; [
+            python3
+            python3Packages.virtualenv
+            gtk3
+            pkg-config
+            gobject-introspection
+            ulauncher
           ];
         };
       });
