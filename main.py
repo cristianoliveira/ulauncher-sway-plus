@@ -6,15 +6,17 @@ from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.shared.event import KeywordQueryEvent, ItemEnterEvent
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
-from ulauncher.api.shared.action.RunScriptAction import RunScriptAction
 from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
-import subprocess
 import sway.windows as windows
+
 from sway.icons import get_icon
+from lib.most_used import MostUsed
 
 
 logger = logging.getLogger(__name__)
 
+
+most_used = MostUsed()
 
 class SwayWindowsExtension(Extension):
 
@@ -31,12 +33,16 @@ class KeywordQueryEventListener(EventListener):
         # list of lowercase words in query
         query = event.get_query().get_argument("").lower().split()
 
+        opened_windows = windows.get_windows()
+        most_used_windows = most_used.sort_by_usage(opened_windows, by_key="name")
+
         items = list([self.get_result_item(w)
-                      for w in windows.get_windows()
+                      for w in most_used_windows
                       # Don't include the ulauncher dialog in the list,
                       # since it already has focus
                       if self.matches_query(w, query) and not w["focused"]])
 
+        # Sort the items by usage
         return RenderResultListAction(items)
 
     def matches_query(self, con, query):
@@ -67,6 +73,7 @@ class ItemEnterEventListener(EventListener):
 
     def on_event(self, event, extension):
         con = event.get_data()
+        most_used.add(con["name"])
         windows.focus(con)
 
 
