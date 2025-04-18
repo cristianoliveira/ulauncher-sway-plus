@@ -24,3 +24,7 @@ start: ## Attemps to kill current ulauncher process and starts a new one.
 
 	# truncate -s 0 ulauncher.log
 	# tail -f ulauncher.log
+
+.PHONY: stop
+stop: ## Stop ulauncher process
+	ps aux | grep ulauncher | grep -v grep | awk '{print $$2}' | xargs kill -9
