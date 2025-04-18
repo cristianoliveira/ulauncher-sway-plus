@@ -34,7 +34,7 @@ class KeywordQueryEventListener(EventListener):
         query = event.get_query().get_argument("").lower().split()
 
         opened_windows = windows.get_windows()
-        most_used_windows = most_used.sort_by_usage(opened_windows, by_key="name")
+        most_used_windows = most_used.sort_by_usage(opened_windows, by_key="app_id")
 
         items = list([self.get_result_item(w)
                       for w in most_used_windows
@@ -73,7 +73,7 @@ class ItemEnterEventListener(EventListener):
 
     def on_event(self, event, extension):
         con = event.get_data()
-        most_used.add(con["name"])
+        most_used.add(con["app_id"])
         windows.focus(con)
 
 
