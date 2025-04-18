@@ -11,7 +11,9 @@ setup: ## Setup extension in ~/.local/share/ulauncher/extensions/
 	source .venv/bin/activate
 	pip install -r requirements.txt
 
-.PHONY: start
+.PHONY: test
+test: ## Run tests using pytest
+	.venv/bin/pytest
 start: ## Attemps to kill current ulauncher process and starts a new one.
 	ps aux | grep ulauncher | grep -v grep | awk '{print $$2}' | xargs kill -9
 	ulauncher --dev -v > ulauncher.log 2>&1 &
