@@ -1,5 +1,6 @@
 # Ulauncher Sway+
-Fork from https://github.com/rdnetto/ulauncher-sway
+
+A improved take of https://github.com/rdnetto/ulauncher-sway
 
 This repo contains a [Ulauncher](https://ulauncher.io) extension for managing [Sway](https://swaywm.org).
 
@@ -8,5 +9,36 @@ This repo contains a [Ulauncher](https://ulauncher.io) extension for managing [S
 ## Features
 
  - [x] Search and focus to window
- - [ ] Most used windows first
+ - [x] Most used windows first
  - [ ] Move window to a given workspace
+
+## Development
+
+### Prerequisites
+
+ - [Ulauncher](https://ulauncher.io)
+ - [Sway](https://swaywm.org)
+ - [gtk3](https://www.gtk.org/)
+
+### Install
+
+Clone the repository and inside the directory run:
+
+```bash
+make setup
+```
+
+To start run
+```bash
+make start
+```
+It will kill any ulauncher instance and restart
+
+
+### Test
+
+To run the automated tests
+
+```bash
+make test
+```

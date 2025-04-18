@@ -14,7 +14,7 @@
       {
         devShells.default = pkgs.mkShell {
 
-        	ULAUNCHER_WS_API="ws://127.0.0.1:5054/ulauncher-sway-plus";
+          ULAUNCHER_WS_API="ws://127.0.0.1:5054/ulauncher-sway-plus";
 
           buildInputs = with pkgs; [
             python3
