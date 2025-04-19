@@ -14,6 +14,27 @@
             "name": "Sway+",
             "description": "Activates a window in Sway",
             "default_value": "w"
+        },
+        {
+            "id": "sort_by",
+            "type": "select",
+            "name": "Sort matches by Most visited | Recent | None",
+            "description": "The order in which to show the bookmarks",
+            "default_value": "none",
+            "options": [
+                {
+                    "text": "Most visited",
+                    "value": "most_used"
+                },
+                {
+                    "text": "Recent visited",
+                    "value": "recent"
+                },
+                {
+                    "text": "None",
+                    "value": "none"
+                }
+            ]
         }
     ]
 }

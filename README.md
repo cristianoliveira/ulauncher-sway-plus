@@ -9,7 +9,7 @@ This repo contains a [Ulauncher](https://ulauncher.io) extension for managing [S
 ## Features
 
  - [x] Search and focus to window
- - [x] Most used windows first
+ - [x] Sort by Most used/ Recently used / No sort
  - [ ] Move window to a given workspace
 
 ## Development

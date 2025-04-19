@@ -7,23 +7,47 @@ from ulauncher.api.shared.event import KeywordQueryEvent, ItemEnterEvent
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
 from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
+from ulauncher.api.shared.event import PreferencesEvent, PreferencesUpdateEvent
+from typing import Union
+
 import sway.windows as windows
 
 from sway.icons import get_icon
-from lib.most_used import MostUsed
+from utils.sorter import sort_strategy
 
 
 logger = logging.getLogger(__name__)
 
 
-most_used = MostUsed()
-
 class SwayWindowsExtension(Extension):
+
+    sorter = sort_strategy("default")
 
     def __init__(self):
         super(SwayWindowsExtension, self).__init__()
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
         self.subscribe(ItemEnterEvent, ItemEnterEventListener())
+        self.subscribe(
+            PreferencesEvent, PreferencesEventListener()
+        )
+
+class PreferencesEventListener(EventListener):
+    def on_event(
+        self,
+        event: Union[PreferencesEvent, PreferencesUpdateEvent],
+        extension: "SwayWindowsExtension",
+    ) -> None:
+        if isinstance(event, PreferencesUpdateEvent):
+            if event.id == "keyword":
+                return
+            extension.preferences[event.id] = event.new_value
+        elif isinstance(event, PreferencesEvent):
+            assert isinstance(event.preferences, dict)
+            extension.preferences = event.preferences
+        # Could be optimized so it only refreshes the custom paths
+        extension.sorter = sort_strategy(
+            extension.preferences["sort_by"]
+        )
 
 
 class KeywordQueryEventListener(EventListener):
@@ -34,7 +58,7 @@ class KeywordQueryEventListener(EventListener):
         query = event.get_query().get_argument("").lower().split()
 
         opened_windows = windows.get_windows()
-        most_used_windows = most_used.sort_by_usage(opened_windows, by_key="app_id")
+        most_used_windows = extension.sorter.sort(opened_windows, by_key="app_id")
 
         items = list([self.get_result_item(w)
                       for w in most_used_windows
@@ -73,7 +97,7 @@ class ItemEnterEventListener(EventListener):
 
     def on_event(self, event, extension):
         con = event.get_data()
-        most_used.add(con["app_id"])
+        extension.sorter.add(con["app_id"])
         windows.focus(con)
 
 
