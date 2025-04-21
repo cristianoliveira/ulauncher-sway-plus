@@ -68,7 +68,7 @@ class KeywordQueryEventListener(EventListener):
         if event_keyword == cmd_keyword: # Sway Marks
             if handle_marks.MARKS_CMD_MARK in query:
                 mark = query[query.index(handle_marks.MARKS_CMD_MARK) + 1:]
-                return handle_marks.mark_current_window_with(mark)
+                return handle_marks.collect_mark_name_for_window(mark)
             if handle_marks.MARKS_CMD_UNMARK in query:
                 unmark = query[query.index(handle_marks.MARKS_CMD_UNMARK) + 1:]
                 return handle_marks.unmark_window_confirmation(unmark)
@@ -107,7 +107,7 @@ class ItemEnterEventListener(EventListener):
         (sub_cmd, args) = event.get_data()
 
         if sub_cmd == handle_marks.MARKS_EVENT_NAME:
-            handle_marks.mark_current_window_with(args[0])
+            handle_marks.collect_mark_name_for_window(args[0])
             return
         if sub_cmd == handle_marks.MARKS_EVENT_CONFIRM:
             sway_marks.mark(args[0])

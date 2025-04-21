@@ -10,11 +10,17 @@ This repo contains a [Ulauncher](https://ulauncher.io) extension for managing [S
 
 ![demo sway marks](https://github.com/user-attachments/assets/aa9f598f-580a-4217-b996-968e97c0c23f)
 
-## Features
+## Features of this fork
 
  - [x] Search and focus to window
  - [x] Sort by Most used/ Recently used / No sort
  - [ ] Move window to a given workspace
+
+### Marks management
+
+ - [x] Add a mark to the current windows
+ - [x] Unmark the current windows
+ - [x] List and focus by marked windows
 
 ## Development
 
