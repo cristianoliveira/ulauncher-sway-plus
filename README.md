@@ -8,7 +8,9 @@ This repo contains a [Ulauncher](https://ulauncher.io) extension for managing [S
 
 ## Sway Marks Feature
 
-![demo sway marks](https://github.com/user-attachments/assets/aa9f598f-580a-4217-b996-968e97c0c23f)
+<div style="text-align: center;">
+  <img src="https://github.com/user-attachments/assets/aa9f598f-580a-4217-b996-968e97c0c23f" alt="Sway Marks Demo" />
+</div>
 
 ## Features of this fork
 
