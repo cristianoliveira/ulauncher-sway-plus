@@ -14,7 +14,7 @@ This repo contains a [Ulauncher](https://ulauncher.io) extension for managing [S
 ## Sway Marks Feature
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/aa9f598f-580a-4217-b996-968e97c0c23f" alt="Sway Marks Demo" width="720" />
+  <img src="https://github.com/user-attachments/assets/a2d83e83-6273-4dfa-be84-d9cce6083649" alt="Sway Marks Demo" />
 </p>
 
 ## Features of this fork
