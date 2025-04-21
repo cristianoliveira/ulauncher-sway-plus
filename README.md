@@ -6,6 +6,10 @@ This repo contains a [Ulauncher](https://ulauncher.io) extension for managing [S
 
 ![screenshot](https://github.com/rdnetto/ulauncher-sway/raw/master/images/screenshot.png)
 
+## Sway Marks Feature
+
+![demo sway marks](https://github.com/user-attachments/assets/aa9f598f-580a-4217-b996-968e97c0c23f)
+
 ## Features
 
  - [x] Search and focus to window
