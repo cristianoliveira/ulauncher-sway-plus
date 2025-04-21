@@ -68,13 +68,19 @@ class KeywordQueryEventListener(EventListener):
         if event_keyword == cmd_keyword: # Sway Marks
             if handle_marks.MARKS_CMD_MARK in query:
                 mark = query[query.index(handle_marks.MARKS_CMD_MARK) + 1:]
-                return handle_marks.collect_mark_name_for_window(mark)
+                ls = handle_marks.collect_mark_name_for_window(mark)
+                return ls
             if handle_marks.MARKS_CMD_UNMARK in query:
                 unmark = query[query.index(handle_marks.MARKS_CMD_UNMARK) + 1:]
                 return handle_marks.unmark_window_confirmation(unmark)
 
-            return filter_result_list(handle_marks.list_options(event_keyword), query)
+            sorted_list = extension.sorter.sort(
+                sway_marks.get_marks(), by_key="app_id"
+            )
 
+            result_list = handle_marks.list_options(event_keyword, sorted_list)
+
+            return filter_result_list(result_list, query)
 
         opened_windows = windows.get_windows()
         most_used_windows = extension.sorter.sort(opened_windows, by_key="app_id")

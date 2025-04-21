@@ -18,15 +18,14 @@ MARKS_EVENT_UNMARK = "sway-marks-unmark"
 MARKS_CMD_MARK = "mark:"
 MARKS_CMD_UNMARK = "unmark:"
 
-def list_options(cmd_keyword: str):
-    marks = sway_marks.get_marks()
+def list_options(cmd_keyword: str, marked_windows: List):
     options = [
         ExtensionResultItem(
             icon='images/icon.png',
             name=f"[{_join_mark_name(mark['marks'])}] {mark['name']}",
             description="Focus this window",
             on_enter=ExtensionCustomAction((MARKS_EVENT_FOCUS, mark), keep_app_open=False),
-        ) for mark in marks if isinstance(mark, dict) and mark.get("name") is not None
+        ) for mark in marked_windows if isinstance(mark, dict) and mark.get("name") is not None
     ]
 
     options.extend([
