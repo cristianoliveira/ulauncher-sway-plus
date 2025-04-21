@@ -15,7 +15,7 @@ from ulauncher.api.shared.action.HideWindowAction import HideWindowAction
 
 import sway.windows as windows
 import sway.marks as sway_marks
-from sway.icons import get_icon
+import sway.icons as sway_icons
 from utils.sorter import sort_strategy
 from utils.filterer import filter_result_list
 import handlers.marks as handle_marks
@@ -91,7 +91,6 @@ class KeywordQueryEventListener(EventListener):
                       # since it already has focus
                       if not w["focused"]])
 
-
         # Sort the items by usage
         return filter_result_list(RenderResultListAction(items), query)
 
@@ -99,7 +98,7 @@ class KeywordQueryEventListener(EventListener):
         (_, appName, winTitle) = windows.app_details(con)
 
         return ExtensionResultItem(
-                icon=get_icon(con),
+                icon=sway_icons.get_icon(con),
                 name=winTitle,
                 description=appName,
                 # This only works because con is a dict, and therefore pickleable
