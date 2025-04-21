@@ -1,7 +1,31 @@
 import json
 import subprocess
 from sway.util import get_child_or_else
+from utils.json_querier import find
 
+def unmark(con_id: str, name: str):
+    """
+    Unmark the current window with the given mark name.
+    :param name: The name of the mark to unmark.
+    """
+    # Unmark the window using swaymsg
+    subprocess.run(["swaymsg", f"[con_id=\"{con_id}\"]", "unmark", name])
+
+def mark(con_id: str, name: str):
+    """
+    Mark the current window with the given mark name.
+    :param name: The name of the mark to set.
+    """
+    # Set the mark using swaymsg
+    subprocess.run(["swaymsg", f"[con_id=\"{con_id}\"]", "mark", name])
+
+def focus_mark(name: str):
+    """
+    Focus the window with the given mark name.
+    :param name: The name of the mark to focus.
+    """
+    # Focus the window using swaymsg
+    subprocess.run(["swaymsg", f"[con_mark=\"{name}\"]", "focus"])
 
 def focus(con):
     '''Returns the list of args to pass to swaymsg'''
@@ -15,6 +39,20 @@ def focus(con):
     # invokes: '<criteria> focus' (documented in sway(5))
     subprocess.check_output(["swaymsg", f"[con_id=\"{con_id}\"]", "focus"])
 
+def get_focused():
+    """
+    Mark the current window with the given mark tag.
+    :param tag: The tag of the mark to set.
+    """
+    # Get the current window ID
+    def find_focused(node):
+        if not isinstance(node, dict):
+            return False
+        return node.get("focused", False)
+
+    con = find(get_tree_object(), find_focused)
+
+    return con
 
 def get_tree_object():
     return json.loads(subprocess.check_output(["swaymsg", "-t", "get_tree"]))

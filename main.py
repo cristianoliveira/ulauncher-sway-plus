@@ -1,6 +1,9 @@
+from typing import Union
+
 import logging
 import gi
 gi.require_version('Gdk', '3.0')
+
 from ulauncher.api.client.Extension import Extension
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.shared.event import KeywordQueryEvent, ItemEnterEvent
@@ -8,12 +11,14 @@ from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
 from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
 from ulauncher.api.shared.event import PreferencesEvent, PreferencesUpdateEvent
-from typing import Union
+from ulauncher.api.shared.action.HideWindowAction import HideWindowAction
 
 import sway.windows as windows
-
+import sway.marks as sway_marks
 from sway.icons import get_icon
 from utils.sorter import sort_strategy
+from utils.filterer import filter_result_list
+import handlers.marks as handle_marks
 
 
 logger = logging.getLogger(__name__)
@@ -57,6 +62,20 @@ class KeywordQueryEventListener(EventListener):
         # list of lowercase words in query
         query = event.get_query().get_argument("").lower().split()
 
+        event_keyword = event.get_keyword()
+        cmd_keyword = extension.preferences.get(handle_marks.MARKS_ID)
+
+        if event_keyword == cmd_keyword: # Sway Marks
+            if handle_marks.MARKS_CMD_MARK in query:
+                mark = query[query.index(handle_marks.MARKS_CMD_MARK) + 1:]
+                return handle_marks.mark_current_window_with(mark)
+            if handle_marks.MARKS_CMD_UNMARK in query:
+                unmark = query[query.index(handle_marks.MARKS_CMD_UNMARK) + 1:]
+                return handle_marks.unmark_window_confirmation(unmark)
+
+            return filter_result_list(handle_marks.list_options(event_keyword), query)
+
+
         opened_windows = windows.get_windows()
         most_used_windows = extension.sorter.sort(opened_windows, by_key="app_id")
 
@@ -64,22 +83,11 @@ class KeywordQueryEventListener(EventListener):
                       for w in most_used_windows
                       # Don't include the ulauncher dialog in the list,
                       # since it already has focus
-                      if self.matches_query(w, query) and not w["focused"]])
+                      if not w["focused"]])
+
 
         # Sort the items by usage
-        return RenderResultListAction(items)
-
-    def matches_query(self, con, query):
-        '''Enable word-wise fuzzy searching'''
-
-        (_, appName, winTitle) = windows.app_details(con)
-        s = (appName + " " + winTitle).lower()
-
-        for word in query:
-            if word not in s:
-                return False
-
-        return True
+        return filter_result_list(RenderResultListAction(items), query)
 
     def get_result_item(self, con):
         (_, appName, winTitle) = windows.app_details(con)
@@ -89,17 +97,28 @@ class KeywordQueryEventListener(EventListener):
                 name=winTitle,
                 description=appName,
                 # This only works because con is a dict, and therefore pickleable
-                on_enter=ExtensionCustomAction(con))
+                on_enter=ExtensionCustomAction(("sway-windows", con)))
 
 
 class ItemEnterEventListener(EventListener):
     '''Executes the focus event, using the data provided in ExtensionCustomAction'''
 
     def on_event(self, event, extension):
-        con = event.get_data()
-        extension.sorter.add(con["app_id"])
-        windows.focus(con)
+        (sub_cmd, args) = event.get_data()
 
+        if sub_cmd == handle_marks.MARKS_EVENT_NAME:
+            handle_marks.mark_current_window_with(args[0])
+            return
+        if sub_cmd == handle_marks.MARKS_EVENT_CONFIRM:
+            sway_marks.mark(args[0])
+            return 
+        if sub_cmd == handle_marks.MARKS_EVENT_UNMARK:
+            for mark in args['marks']:
+                sway_marks.unmark(mark)
+            return
+
+        extension.sorter.add(args["app_id"])
+        windows.focus(args)
 
 if __name__ == '__main__':
     SwayWindowsExtension().run()

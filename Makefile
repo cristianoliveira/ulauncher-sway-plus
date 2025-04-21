@@ -19,7 +19,7 @@ test: ## Run tests using pytest
 start: ## Attemps to kill current ulauncher process and starts a new one.
 	ps aux | grep ulauncher | grep -v grep | awk '{print $$2}' | xargs kill -9
 	ulauncher --no-extensions --dev -v > /tmp/ulauncher.log 2>&1 &
-	sleep 2
+	sleep 1
 	python main.py
 
 	# truncate -s 0 ulauncher.log

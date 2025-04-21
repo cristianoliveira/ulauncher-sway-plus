@@ -9,11 +9,18 @@
     },
     "preferences": [
         {
-            "id": "kw",
+            "id": "sway-windows",
             "type": "keyword",
             "name": "Sway+",
             "description": "Activates a window in Sway",
             "default_value": "w"
+        },
+        {
+            "id": "sway-marks",
+            "type": "keyword",
+            "name": "Sway+ marks",
+            "description": "Manages marks in Sway",
+            "default_value": "wm"
         },
         {
             "id": "sort_by",
