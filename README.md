@@ -3,14 +3,19 @@
 A improved take of https://github.com/rdnetto/ulauncher-sway
 
 This repo contains a [Ulauncher](https://ulauncher.io) extension for managing [Sway](https://swaywm.org).
+![image]()
 
-![screenshot](https://github.com/rdnetto/ulauncher-sway/raw/master/images/screenshot.png)
+## Sway Windows +
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/bc16fcff-c8be-405a-ac76-e221b328a39a" alt="Sway Demo" width="720" />
+</p>
 
 ## Sway Marks Feature
 
-<div style="text-align: center;">
-  <img src="https://github.com/user-attachments/assets/aa9f598f-580a-4217-b996-968e97c0c23f" alt="Sway Marks Demo" />
-</div>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/aa9f598f-580a-4217-b996-968e97c0c23f" alt="Sway Marks Demo" width="720" />
+</p>
 
 ## Features of this fork
 
