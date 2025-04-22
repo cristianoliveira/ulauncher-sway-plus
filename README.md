@@ -36,6 +36,17 @@ This repo contains a [Ulauncher](https://ulauncher.io) extension for managing [S
  - [Sway](https://swaywm.org)
  - [gtk3](https://www.gtk.org/)
 
+### CI tools
+
+ - [black](https://github.com/psf/black) - Python code formatter
+ - [isort](https://github.com/PyCQA/isort) - Python import sorter
+
+### CI install
+
+```bash
+make ci-install
+```
+
 ### Install
 
 Clone the repository and inside the directory run:
