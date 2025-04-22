@@ -1,6 +1,7 @@
 from typing import Union
 
 from sway import windows as sw
+from sway.types import SwayNode
 from utils.json_querier import find, find_all
 
 
@@ -11,18 +12,18 @@ def unmark(tag: str):
     """
 
     # Get the current window ID
-    def find_marked(node):
+    def find_marked(node: SwayNode):
         if not isinstance(node, dict):
             return False
         if not isinstance(node.get("marks"), list):
             return False
 
-        return tag in node.get("marks")
+        return tag in node["marks"]
 
-    node = find(sw.get_tree_object(), find_marked)
+    node: SwayNode = find(sw.get_tree_object(), find_marked)
 
     # Unmark the window using swaymsg
-    sw.unmark(node.get("id"), tag)
+    sw.unmark(node["id"], tag)
 
 
 def mark(tag: str):
@@ -32,8 +33,8 @@ def mark(tag: str):
     """
 
     # Get the current window ID
-    def find_focused(node):
-        if not isinstance(node, dict):
+    def find_focused(node: SwayNode):
+        if not isinstance(node, SwayNode):
             return False
         return node.get("focused", False)
 
@@ -45,7 +46,7 @@ def mark(tag: str):
         raise ValueError("Focused window is not a valid container object")
 
     # Set the mark using swaymsg
-    sw.mark(con.get("id"), tag)
+    sw.mark(con["id"], tag)
 
 
 def focus(tag: str):
@@ -61,7 +62,7 @@ def focus(tag: str):
         if not isinstance(node.get("marks"), list):
             return False
 
-        return tag in node.get("marks")
+        return tag in node["marks"]
 
     con_id = find(sw.get_tree_object(), find_marked)
 
@@ -76,13 +77,13 @@ def get_marks(tag: Union[str, None] = None):
     """
 
     # Get the current window ID
-    def find_marked(node):
+    def find_marked(node: SwayNode):
         if not isinstance(node, dict):
             return False
         if not isinstance(node.get("marks"), list):
             return False
         if tag is not None and len(tag) > 0:
-            return tag in node.get("marks")
+            return tag in node["marks"]
 
         return len(node.get("marks", [])) > 0
 

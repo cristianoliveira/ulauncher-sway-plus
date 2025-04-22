@@ -1,9 +1,9 @@
-from typing import Any, Callable, Dict, List, Self, Union
+from typing import Callable, List
 
-Node = Union[Dict[str, Any], List, None, str, int, float, bool]
+from sway.types import SwayNode
 
 
-def find(node: Node, fn_predicate: Callable) -> Node:
+def find(node: SwayNode, fn_predicate: Callable[[SwayNode], bool]) -> SwayNode:
     """
     Finds the first occurrence of a key in a nested dictionary or list
     """
@@ -36,7 +36,7 @@ def find(node: Node, fn_predicate: Callable) -> Node:
     return None
 
 
-def find_all(node: Node, fn_predicate: Callable) -> List[Node]:
+def find_all(node: SwayNode, fn_predicate: Callable) -> List[SwayNode]:
     """
     Finds all occurrences of a key in a nested dictionary or list
     """
