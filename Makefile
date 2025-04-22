@@ -38,3 +38,7 @@ start: ## Attemps to kill current ulauncher process and starts a new one.
 .PHONY: stop
 stop: ## Stop ulauncher process
 	ps aux | grep ulauncher | grep -v grep | awk '{print $$2}' | xargs kill -9
+
+.PHONY: ci-setup
+ci-setup: ## Install git hooks
+	bash .ci/hooks/pre-push
