@@ -15,6 +15,16 @@ setup: ## Setup extension in ~/.local/share/ulauncher/extensions/
 test: ## Run tests using pytest
 	python -m unittest discover -s tests
 
+.PHONY: format
+format: ## Format code using black and isort
+	black --line-length 88 --target-version py39 .
+	isort -r --profile black .
+
+.PHONY: lint
+lint: ## Run linters
+	black --check --line-length 88 --target-version py39 .
+	isort -c --profile black .
+
 .PHONY: start
 start: ## Attemps to kill current ulauncher process and starts a new one.
 	ps aux | grep ulauncher | grep -v grep | awk '{print $$2}' | xargs kill -9

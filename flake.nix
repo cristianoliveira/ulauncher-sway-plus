@@ -23,6 +23,11 @@
             pkg-config
             gobject-introspection
             ulauncher
+
+            # Tools
+            black
+            isort
+
           ];
         };
       });

@@ -1,5 +1,7 @@
 from typing import List
+
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
+
 
 def filter_result_list(render_result_list: RenderResultListAction, query: List[str]):
     """

@@ -1,27 +1,20 @@
 import unittest
+
 from utils.json_querier import find
+
 
 class TestMostUsed(unittest.TestCase):
     def test_it_does_throw_when_empty(self):
         node = {
             "key1": {
                 "type": "test",
-                "key2": {
-                    "type": "test2",
-                    "value": "first_match"
-                },
-                "key4": "value2"
+                "key2": {"type": "test2", "value": "first_match"},
+                "key4": "value2",
             },
             "key5": [
-                {
-                    "type": "test3",
-                    "value": "not_a_match"
-                },
-                {
-                    "type": "test4",
-                    "value": "second_match"
-                }
-            ]
+                {"type": "test3", "value": "not_a_match"},
+                {"type": "test4", "value": "second_match"},
+            ],
         }
 
         def test_predicate(x):

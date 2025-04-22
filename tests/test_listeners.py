@@ -1,12 +1,13 @@
 import unittest
 from unittest.mock import patch
-from ulauncher.api.shared.event import KeywordQueryEvent
-from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
+
 from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
+from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
+from ulauncher.api.shared.event import KeywordQueryEvent
 from ulauncher.search.Query import Query
-from main import SwayWindowsExtension, KeywordQueryEventListener
 
 from handlers.marks import MARKS_ID
+from main import KeywordQueryEventListener, SwayWindowsExtension
 
 
 class TestKeywordQueryEventListener(unittest.TestCase):
@@ -34,12 +35,12 @@ class TestKeywordQueryEventListener(unittest.TestCase):
 
     def test_list_marked_windows(self):
         input_text = "wm"
-        with patch('sway.marks.get_marks') as get_marks:
+        with patch("sway.marks.get_marks") as get_marks:
             get_marks.return_value = [
                 {"name": "foo", "marks": ["bar"]},
                 {"name": "baz", "marks": ["qux"]},
             ]
-        
+
             listener = KeywordQueryEventListener()
             key_event = KeywordQueryEvent(Query(input_text))
 
@@ -60,7 +61,7 @@ class TestKeywordQueryEventListener(unittest.TestCase):
         listener = KeywordQueryEventListener()
         key_event = KeywordQueryEvent(Query(input_text))
 
-        with patch('sway.marks.get_marks') as get_marks:
+        with patch("sway.marks.get_marks") as get_marks:
             get_marks.return_value = [
                 {"name": "bar", "marks": ["foo"]},
                 {"name": "baz", "marks": ["qux"]},
@@ -74,18 +75,35 @@ class TestKeywordQueryEventListener(unittest.TestCase):
             self.assertEqual(len(result.result_list), 1)
             self.assertEqual(result.result_list[0].get_name(), "[qux] baz")
 
-
-    @patch('sway.icons.get_icon')
-    @patch('sway.windows.get_windows')
+    @patch("sway.icons.get_icon")
+    @patch("sway.windows.get_windows")
     def test_showing_windows(self, mock_get_windows, mock_get_icon):
         # Test the show command
         input_text = "w bar"
 
         mock_get_icon.return_value = "icon_path"
         mock_get_windows.return_value = [
-            {"name": "foo bar 1", "app_id": "foo bar", "pid": "foo", "focused": False, "id": "id1"},
-            {"name": "baz bar", "app_id": "baz bar", "pid": "foo", "focused": True, "id": "id2"},
-            {"name": "bar baz", "app_id": "bar baz", "pid": "foo", "focused": False, "id": "id3"},
+            {
+                "name": "foo bar 1",
+                "app_id": "foo bar",
+                "pid": "foo",
+                "focused": False,
+                "id": "id1",
+            },
+            {
+                "name": "baz bar",
+                "app_id": "baz bar",
+                "pid": "foo",
+                "focused": True,
+                "id": "id2",
+            },
+            {
+                "name": "bar baz",
+                "app_id": "bar baz",
+                "pid": "foo",
+                "focused": False,
+                "id": "id3",
+            },
         ]
 
         listener = KeywordQueryEventListener()

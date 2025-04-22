@@ -1,25 +1,28 @@
+import logging
 from typing import Union
 
-import logging
 import gi
-gi.require_version('Gdk', '3.0')
 
-from ulauncher.api.client.Extension import Extension
+gi.require_version("Gdk", "3.0")
+
 from ulauncher.api.client.EventListener import EventListener
-from ulauncher.api.shared.event import KeywordQueryEvent, ItemEnterEvent
-from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
-from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
+from ulauncher.api.client.Extension import Extension
 from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
-from ulauncher.api.shared.event import PreferencesEvent, PreferencesUpdateEvent
-from ulauncher.api.shared.action.HideWindowAction import HideWindowAction
+from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
+from ulauncher.api.shared.event import (
+    ItemEnterEvent,
+    KeywordQueryEvent,
+    PreferencesEvent,
+    PreferencesUpdateEvent,
+)
+from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 
-import sway.windows as windows
-import sway.marks as sway_marks
-import sway.icons as sway_icons
-from utils.sorter import sort_strategy
-from utils.filterer import filter_result_list
 import handlers.marks as handle_marks
-
+import sway.icons as sway_icons
+import sway.marks as sway_marks
+import sway.windows as windows
+from utils.filterer import filter_result_list
+from utils.sorter import sort_strategy
 
 logger = logging.getLogger(__name__)
 
@@ -32,9 +35,8 @@ class SwayWindowsExtension(Extension):
         super(SwayWindowsExtension, self).__init__()
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
         self.subscribe(ItemEnterEvent, ItemEnterEventListener())
-        self.subscribe(
-            PreferencesEvent, PreferencesEventListener()
-        )
+        self.subscribe(PreferencesEvent, PreferencesEventListener())
+
 
 class PreferencesEventListener(EventListener):
     def on_event(
@@ -50,13 +52,11 @@ class PreferencesEventListener(EventListener):
             assert isinstance(event.preferences, dict)
             extension.preferences = event.preferences
         # Could be optimized so it only refreshes the custom paths
-        extension.sorter = sort_strategy(
-            extension.preferences["sort_by"]
-        )
+        extension.sorter = sort_strategy(extension.preferences["sort_by"])
 
 
 class KeywordQueryEventListener(EventListener):
-    '''Generates items for display on query'''
+    """Generates items for display on query"""
 
     def on_event(self, event, extension):
         # list of lowercase words in query
@@ -65,19 +65,17 @@ class KeywordQueryEventListener(EventListener):
         event_keyword = event.get_keyword()
         cmd_keyword = extension.preferences.get(handle_marks.MARKS_ID)
 
-        if event_keyword == cmd_keyword: # Sway Marks
+        if event_keyword == cmd_keyword:  # Sway Marks
 
             if handle_marks.MARKS_CMD_MARK in query:
-                mark = query[query.index(handle_marks.MARKS_CMD_MARK) + 1:]
+                mark = query[query.index(handle_marks.MARKS_CMD_MARK) + 1 :]
                 return handle_marks.collect_mark_name_for_window(mark)
 
             if handle_marks.MARKS_CMD_UNMARK in query:
-                unmark = query[query.index(handle_marks.MARKS_CMD_UNMARK) + 1:]
+                unmark = query[query.index(handle_marks.MARKS_CMD_UNMARK) + 1 :]
                 return handle_marks.unmark_window_confirmation(unmark)
 
-            sorted_list = extension.sorter.sort(
-                sway_marks.get_marks(), by_key="app_id"
-            )
+            sorted_list = extension.sorter.sort(sway_marks.get_marks(), by_key="app_id")
 
             result_list = handle_marks.list_options(event_keyword, sorted_list)
 
@@ -86,11 +84,15 @@ class KeywordQueryEventListener(EventListener):
         opened_windows = windows.get_windows()
         most_used_windows = extension.sorter.sort(opened_windows, by_key="app_id")
 
-        items = list([self.get_result_item(w)
-                      for w in most_used_windows
-                      # Don't include the ulauncher dialog in the list,
-                      # since it already has focus
-                      if not w["focused"]])
+        items = list(
+            [
+                self.get_result_item(w)
+                for w in most_used_windows
+                # Don't include the ulauncher dialog in the list,
+                # since it already has focus
+                if not w["focused"]
+            ]
+        )
 
         # Sort the items by usage
         return filter_result_list(RenderResultListAction(items), query)
@@ -99,15 +101,16 @@ class KeywordQueryEventListener(EventListener):
         (_, appName, winTitle) = windows.app_details(con)
 
         return ExtensionResultItem(
-                icon=sway_icons.get_icon(con),
-                name=winTitle,
-                description=appName,
-                # This only works because con is a dict, and therefore pickleable
-                on_enter=ExtensionCustomAction(("sway-windows", con)))
+            icon=sway_icons.get_icon(con),
+            name=winTitle,
+            description=appName,
+            # This only works because con is a dict, and therefore pickleable
+            on_enter=ExtensionCustomAction(("sway-windows", con)),
+        )
 
 
 class ItemEnterEventListener(EventListener):
-    '''Executes the focus event, using the data provided in ExtensionCustomAction'''
+    """Executes the focus event, using the data provided in ExtensionCustomAction"""
 
     def on_event(self, event, extension):
         (sub_cmd, args) = event.get_data()
@@ -117,14 +120,15 @@ class ItemEnterEventListener(EventListener):
             return
         if sub_cmd == handle_marks.MARKS_EVENT_CONFIRM:
             sway_marks.mark(args[0])
-            return 
+            return
         if sub_cmd == handle_marks.MARKS_EVENT_UNMARK:
-            for mark in args['marks']:
+            for mark in args["marks"]:
                 sway_marks.unmark(mark)
             return
 
         extension.sorter.add(args["app_id"])
         windows.focus(args)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     SwayWindowsExtension().run()

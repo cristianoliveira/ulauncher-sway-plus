@@ -1,9 +1,9 @@
-from typing import Callable, Dict, Any, Union, Self, List
+from typing import Any, Callable, Dict, List, Self, Union
 
 Node = Union[Dict[str, Any], List, None, str, int, float, bool]
 
-def find(node: Node, fn_predicate: Callable) -> Node:
 
+def find(node: Node, fn_predicate: Callable) -> Node:
     """
     Finds the first occurrence of a key in a nested dictionary or list
     """
@@ -34,6 +34,7 @@ def find(node: Node, fn_predicate: Callable) -> Node:
                 return result
 
     return None
+
 
 def find_all(node: Node, fn_predicate: Callable) -> List[Node]:
     """

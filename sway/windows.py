@@ -1,7 +1,9 @@
 import json
 import subprocess
+
 from sway.util import get_child_or_else
 from utils.json_querier import find
+
 
 def unmark(con_id: str, name: str):
     """
@@ -9,7 +11,8 @@ def unmark(con_id: str, name: str):
     :param name: The name of the mark to unmark.
     """
     # Unmark the window using swaymsg
-    subprocess.run(["swaymsg", f"[con_id=\"{con_id}\"]", "unmark", name])
+    subprocess.run(["swaymsg", f'[con_id="{con_id}"]', "unmark", name])
+
 
 def mark(con_id: str, name: str):
     """
@@ -17,7 +20,8 @@ def mark(con_id: str, name: str):
     :param name: The name of the mark to set.
     """
     # Set the mark using swaymsg
-    subprocess.run(["swaymsg", f"[con_id=\"{con_id}\"]", "mark", name])
+    subprocess.run(["swaymsg", f'[con_id="{con_id}"]', "mark", name])
+
 
 def focus_mark(name: str):
     """
@@ -25,10 +29,11 @@ def focus_mark(name: str):
     :param name: The name of the mark to focus.
     """
     # Focus the window using swaymsg
-    subprocess.run(["swaymsg", f"[con_mark=\"{name}\"]", "focus"])
+    subprocess.run(["swaymsg", f'[con_mark="{name}"]', "focus"])
+
 
 def focus(con):
-    '''Returns the list of args to pass to swaymsg'''
+    """Returns the list of args to pass to swaymsg"""
 
     # Container objects have 3 different ID fields:
     #   id - the container ID, called con_id in criteria syntax
@@ -37,13 +42,15 @@ def focus(con):
     con_id = con["id"]
 
     # invokes: '<criteria> focus' (documented in sway(5))
-    subprocess.check_output(["swaymsg", f"[con_id=\"{con_id}\"]", "focus"])
+    subprocess.check_output(["swaymsg", f'[con_id="{con_id}"]', "focus"])
+
 
 def get_focused():
     """
     Mark the current window with the given mark tag.
     :param tag: The tag of the mark to set.
     """
+
     # Get the current window ID
     def find_focused(node):
         if not isinstance(node, dict):
@@ -53,6 +60,7 @@ def get_focused():
     con = find(get_tree_object(), find_focused)
 
     return con
+
 
 def get_tree_object():
     return json.loads(subprocess.check_output(["swaymsg", "-t", "get_tree"]))
@@ -66,7 +74,9 @@ def get_windows(tree=None):
         assert output["type"] == "output", "Expected output, got" + repr(output)
 
         for workspace in output["nodes"]:
-            assert workspace["type"] == "workspace", "Expected workspace, got" + repr(workspace)
+            assert workspace["type"] == "workspace", "Expected workspace, got" + repr(
+                workspace
+            )
 
             for container in get_child_or_else(workspace, "nodes", []):
                 windows += get_container_windows(container)
@@ -85,7 +95,7 @@ def get_container_windows(con):
         windows.append(con)
 
     # Recurse
-    for child in con['nodes']:
+    for child in con["nodes"]:
         windows += get_container_windows(child)
 
     return windows
@@ -93,9 +103,11 @@ def get_container_windows(con):
 
 def app_details(con):
     # app_id is wayland only, window_properties is X11 only
-    app_name = (con["app_id"]
-                if ("app_id" in con and con["app_id"] != None)
-                else con["window_properties"].get("instance", "unknown"))
+    app_name = (
+        con["app_id"]
+        if ("app_id" in con and con["app_id"] != None)
+        else con["window_properties"].get("instance", "unknown")
+    )
 
     # (con_id, application name, window title)
     return (con["id"], app_name, con["name"])
@@ -107,4 +119,3 @@ if __name__ == "__main__":
 
     for w in wins:
         print(app_details(w))
-

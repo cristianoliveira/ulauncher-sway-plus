@@ -1,12 +1,15 @@
 from typing import Union
-from utils.json_querier import find, find_all
+
 from sway import windows as sw
+from utils.json_querier import find, find_all
+
 
 def unmark(tag: str):
     """
     Unmark the current window with the given mark tag.
     :param tag: The tag of the mark to unmark.
     """
+
     # Get the current window ID
     def find_marked(node):
         if not isinstance(node, dict):
@@ -21,11 +24,13 @@ def unmark(tag: str):
     # Unmark the window using swaymsg
     sw.unmark(node.get("id"), tag)
 
+
 def mark(tag: str):
     """
     Mark the current window with the given mark tag.
     :param tag: The tag of the mark to set.
     """
+
     # Get the current window ID
     def find_focused(node):
         if not isinstance(node, dict):
@@ -42,11 +47,13 @@ def mark(tag: str):
     # Set the mark using swaymsg
     sw.mark(con.get("id"), tag)
 
+
 def focus(tag: str):
     """
     Focus the window with the given mark tag.
     :param tag: The tag of the mark to focus.
     """
+
     # Get the current window ID
     def find_marked(node):
         if not isinstance(node, dict):
@@ -61,11 +68,13 @@ def focus(tag: str):
     # Focus the window using swaymsg
     sw.focus(con_id)
 
+
 def get_marks(tag: Union[str, None] = None):
     """
     Get the list of marks.
     :return: A list of marks.
     """
+
     # Get the current window ID
     def find_marked(node):
         if not isinstance(node, dict):
