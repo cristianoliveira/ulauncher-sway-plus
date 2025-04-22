@@ -22,7 +22,9 @@ def filter_result_list(render_result_list: RenderResultListAction, query: List[s
 
     filtered_result_list = []
     for item in items:
-        if all(word in item.get_name().lower() for word in query):
+        if all(word in item.get_name().lower() for word in query) or all(
+            word in item.get_description("").lower() for word in query
+        ):
             filtered_result_list.append(item)
 
     return RenderResultListAction(filtered_result_list)

@@ -61,6 +61,36 @@ class TestFilterer(unittest.TestCase):
             "description for first_second_match",
         )
 
+    def test_matches_weither_name_or_description(self):
+        items = [
+            {"name": "first_match", "description": "foo first"},
+            {"name": "second_match", "description": "bar second"},
+            {"name": "third_match", "description": "baz third"},
+            {"name": "not_a_match", "description": "qux not_a_match"},
+            {"name": "first_second_match", "description": "quux first second"},
+        ]
+        extension_result_items = [
+            ExtensionResultItem(
+                icon=None,
+                name=item["name"],
+                description=item["description"],
+                on_enter=None,
+            )
+            for item in items
+        ]
+        render_result_list = RenderResultListAction(extension_result_items)
+
+        # Test filtering with a query that matches some items
+        query = ["first", "match"]
+        filtered_result_list = filter_result_list(render_result_list, query)
+        self.assertEqual(len(filtered_result_list.result_list), 2)
+        self.assertEqual(filtered_result_list.result_list[0].get_name(), "first_match")
+
+        query = ["foo"]
+        filtered_result_list = filter_result_list(render_result_list, query)
+        self.assertEqual(len(filtered_result_list.result_list), 1)
+        self.assertEqual(filtered_result_list.result_list[0].get_name(), "first_match")
+
     def test_throws_type_error(self):
         # Create a mock object that is not a RenderResultListAction
         class MockObject:
