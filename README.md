@@ -1,9 +1,8 @@
 # Ulauncher Sway+
 
-A improved take of https://github.com/rdnetto/ulauncher-sway
+An evolution of https://github.com/rdnetto/ulauncher-sway
 
 This repo contains a [Ulauncher](https://ulauncher.io) extension for managing [Sway](https://swaywm.org).
-![image]()
 
 ## Sway Windows +
 
