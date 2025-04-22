@@ -7,21 +7,16 @@ gi.require_version("Gdk", "3.0")
 
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.client.Extension import Extension
-from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
-from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
 from ulauncher.api.shared.event import (
     ItemEnterEvent,
     KeywordQueryEvent,
     PreferencesEvent,
     PreferencesUpdateEvent,
 )
-from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 
 import handlers.marks as handle_marks
-import sway.icons as sway_icons
+import handlers.windows as handle_windows
 import sway.marks as sway_marks
-import sway.windows as windows
-from utils.filterer import filter_result_list
 from utils.sorter import sort_strategy
 
 logger = logging.getLogger(__name__)
@@ -56,8 +51,6 @@ class PreferencesEventListener(EventListener):
 
 
 class KeywordQueryEventListener(EventListener):
-    """Generates items for display on query"""
-
     def on_event(self, event, extension):
         # list of lowercase words in query
         query = event.get_query().get_argument("").lower().split()
@@ -73,45 +66,17 @@ class KeywordQueryEventListener(EventListener):
 
             if handle_marks.MARKS_CMD_UNMARK in query:
                 unmark = query[query.index(handle_marks.MARKS_CMD_UNMARK) + 1 :]
-                return handle_marks.unmark_window_confirmation(unmark)
+                return handle_marks.unmark_window_selection(unmark)
 
-            sorted_list = extension.sorter.sort(sway_marks.get_marks(), by_key="app_id")
+            return handle_marks.show_marked_windows_and_options(
+                extension, event_keyword, query
+            )
 
-            result_list = handle_marks.list_options(event_keyword, sorted_list)
-
-            return filter_result_list(result_list, query)
-
-        opened_windows = windows.get_windows()
-        most_used_windows = extension.sorter.sort(opened_windows, by_key="app_id")
-
-        items = list(
-            [
-                self.get_result_item(w)
-                for w in most_used_windows
-                # Don't include the ulauncher dialog in the list,
-                # since it already has focus
-                if not w["focused"]
-            ]
-        )
-
-        # Sort the items by usage
-        return filter_result_list(RenderResultListAction(items), query)
-
-    def get_result_item(self, con):
-        (_, appName, winTitle) = windows.app_details(con)
-
-        return ExtensionResultItem(
-            icon=sway_icons.get_icon(con),
-            name=winTitle,
-            description=appName,
-            # This only works because con is a dict, and therefore pickleable
-            on_enter=ExtensionCustomAction(("sway-windows", con)),
-        )
+        else:
+            return handle_windows.show_opened_windows(extension, query)
 
 
 class ItemEnterEventListener(EventListener):
-    """Executes the focus event, using the data provided in ExtensionCustomAction"""
-
     def on_event(self, event, extension):
         (sub_cmd, args) = event.get_data()
 
@@ -126,8 +91,7 @@ class ItemEnterEventListener(EventListener):
                 sway_marks.unmark(mark)
             return
 
-        extension.sorter.add(args["app_id"])
-        windows.focus(args)
+        handle_windows.focus_selected_window(extension, args)
 
 
 if __name__ == "__main__":

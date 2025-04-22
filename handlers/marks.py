@@ -7,6 +7,7 @@ from ulauncher.api.shared.action.SetUserQueryAction import SetUserQueryAction
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 
 import sway.marks as sway_marks
+from utils.filterer import filter_result_list
 
 # Enum
 MARKS_ID = "sway-marks"
@@ -19,7 +20,16 @@ MARKS_CMD_MARK = "mark:"
 MARKS_CMD_UNMARK = "unmark:"
 
 
-def list_options(cmd_keyword: str, marked_windows: List):
+def show_marked_windows_and_options(extension, cmd_keyword: str, query: List[str]):
+    """
+    Show marked windows and options to mark or unmark them.
+
+    :param extension: The extension instance.
+    :param cmd_keyword: The command keyword.
+    :param query: The query string.
+    """
+
+    marked_windows = extension.sorter.sort(sway_marks.get_marks(), by_key="app_id")
     options = [
         ExtensionResultItem(
             icon="images/icon.png",
@@ -50,7 +60,7 @@ def list_options(cmd_keyword: str, marked_windows: List):
         ]
     )
 
-    return RenderResultListAction(options)
+    return filter_result_list(RenderResultListAction(options), query)
 
 
 def collect_mark_name_for_window(mark_name: str):
