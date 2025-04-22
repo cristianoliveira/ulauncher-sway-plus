@@ -34,7 +34,7 @@ def mark(tag: str):
 
     # Get the current window ID
     def find_focused(node: SwayNode):
-        if not isinstance(node, SwayNode):
+        if not isinstance(node, dict):
             return False
         return node.get("focused", False)
 
