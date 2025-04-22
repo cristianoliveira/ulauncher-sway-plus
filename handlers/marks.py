@@ -82,7 +82,7 @@ def collect_mark_name_for_window(mark_name: str):
     )
 
 
-def unmark_window_confirmation(mark_name: str):
+def unmark_window_selection(mark_name: str):
     """
     Mark the current window with the given mark name.
 
