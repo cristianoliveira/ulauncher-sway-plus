@@ -66,10 +66,11 @@ class KeywordQueryEventListener(EventListener):
         cmd_keyword = extension.preferences.get(handle_marks.MARKS_ID)
 
         if event_keyword == cmd_keyword: # Sway Marks
+
             if handle_marks.MARKS_CMD_MARK in query:
                 mark = query[query.index(handle_marks.MARKS_CMD_MARK) + 1:]
-                ls = handle_marks.collect_mark_name_for_window(mark)
-                return ls
+                return handle_marks.collect_mark_name_for_window(mark)
+
             if handle_marks.MARKS_CMD_UNMARK in query:
                 unmark = query[query.index(handle_marks.MARKS_CMD_UNMARK) + 1:]
                 return handle_marks.unmark_window_confirmation(unmark)
