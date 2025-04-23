@@ -16,8 +16,8 @@ MARKS_EVENT_CONFIRM = "sway-marks-confirm"
 MARKS_EVENT_FOCUS = "sway-marks-focus"
 MARKS_EVENT_UNMARK = "sway-marks-unmark"
 
-MARKS_CMD_MARK = "mark:"
-MARKS_CMD_UNMARK = "unmark:"
+MARKS_CMD_MARK = "mark"
+MARKS_CMD_UNMARK = "unmark"
 
 
 def show_marked_windows_and_options(extension, cmd_keyword: str, query: List[str]):
@@ -82,14 +82,15 @@ def collect_mark_name_for_window(mark_name: str):
     )
 
 
-def unmark_window_selection(mark_name: str):
+def unmark_window_selection(mark_name: List[str]):
     """
     Mark the current window with the given mark name.
 
     :param mark_name: The name of the mark to set.
     """
-    marks = sway_marks.get_marks(mark_name)
-    return RenderResultListAction(
+    name = "{mark_name}".join(" ").strip()
+    marks = sway_marks.get_marks(name)
+    res_list = RenderResultListAction(
         [
             ExtensionResultItem(
                 icon="images/icon.png",
@@ -100,9 +101,10 @@ def unmark_window_selection(mark_name: str):
                 ),
             )
             for mark in marks
-            if isinstance(mark, dict) and mark.get("name") is not None
         ]
     )
+
+    return filter_result_list(res_list, mark_name)
 
 
 def _join_mark_name(name: List[str]):
