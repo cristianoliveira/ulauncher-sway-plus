@@ -20,6 +20,8 @@ This repo contains a [Ulauncher](https://ulauncher.io) extension for managing [S
 
  - [x] Search and focus to window
  - [x] Sort by Most used/ Recently used / No sort
+ - [x] Search takes into account title name + application name
+ - [x] Fixes for windows without identification
 
 ### Marks management
 
