@@ -4,5 +4,4 @@ set -euo pipefail
 
 echo "🔧 Installing pre-push hook..."
 ln -sf .ci/hooks/pre-push .git/hooks/pre-push
-chmod +x .git/hooks/pre-push
 echo "✅ Pre-push hook installed."
