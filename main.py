@@ -59,16 +59,22 @@ class KeywordQueryEventListener(EventListener):
         cmd_keyword = extension.preferences.get(handle_marks.MARKS_ID)
 
         if event_keyword == cmd_keyword:  # Sway Marks
-            subcmd = query[0] if len(query) >= 1 else None
-            should_show_subcmd = raw_query.endswith(" ")
+            ## pop first element in python list
+            subcmd = None
+
+            if (
+                handle_marks.MARKS_CMD_MARK in query
+                or handle_marks.MARKS_CMD_UNMARK in query
+            ):
+                subcmd = query.pop(0)
+
+            should_show_subcmd = raw_query.endswith(" ") or len(query) > 0
 
             if subcmd == handle_marks.MARKS_CMD_MARK and should_show_subcmd:
-                mark = query[query.index(handle_marks.MARKS_CMD_MARK) + 1 :]
-                return handle_marks.collect_mark_name_for_window(mark)
+                return handle_marks.collect_mark_name_for_window(" ".join(query))
 
             if subcmd == handle_marks.MARKS_CMD_UNMARK:
-                unmark = query[query.index(handle_marks.MARKS_CMD_UNMARK) + 1 :]
-                return handle_marks.unmark_window_selection(unmark)
+                return handle_marks.unmark_window_selection(query)
 
             return handle_marks.show_marked_windows_and_options(
                 extension, event_keyword, query
@@ -86,7 +92,10 @@ class ItemEnterEventListener(EventListener):
             handle_marks.collect_mark_name_for_window(args[0])
             return
         if sub_cmd == handle_marks.MARKS_EVENT_CONFIRM:
-            sway_marks.mark(args[0])
+            if isinstance(args, str):
+                raise ValueError("Expected a list of marks")
+
+            sway_marks.mark(args)
             return
         if sub_cmd == handle_marks.MARKS_EVENT_UNMARK:
             for mark in args["marks"]:
