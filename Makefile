@@ -41,4 +41,4 @@ stop: ## Stop ulauncher process
 
 .PHONY: ci-setup
 ci-setup: ## Install git hooks
-	bash .ci/hooks/pre-push
+	bash .ci/hooks/pre-push-setup
