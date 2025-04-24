@@ -10,18 +10,22 @@
     - make format
     - make lint
     - git add {{relative_path}}
-  change: '**/*.py'
+  change: '**/*'
   ignore:
     # ignore all python compiled files
-    - '__pycache__'
-    - '*.pyc'
+    # - '__pycache__'
+    # - '*.pyc'
+    # - '.git/**'
+    - '{{git}}'
 
 - name: start app
   run: 
     - make start
-  change: '**/*.py'
+  change: '**/*'
   ignore:
     # ignore all python compiled files
-    - '__pycache__'
-    - '*.pyc'
+    # - '__pycache__'
+    # - '*.pyc'
+    # - '.git/**'
+    - '{{git}}'
 

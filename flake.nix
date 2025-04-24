@@ -28,7 +28,7 @@
             black
             isort
 
-            funzzy # watcher
+            # funzzy # watcher
           ];
         };
       });
