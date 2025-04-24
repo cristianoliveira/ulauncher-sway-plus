@@ -52,19 +52,21 @@ class PreferencesEventListener(EventListener):
 
 class KeywordQueryEventListener(EventListener):
     def on_event(self, event, extension):
-        # list of lowercase words in query
-        query = event.get_query().get_argument("").lower().split()
+        raw_query = event.get_query()
+        query = raw_query.get_argument("").lower().split()
 
         event_keyword = event.get_keyword()
         cmd_keyword = extension.preferences.get(handle_marks.MARKS_ID)
 
         if event_keyword == cmd_keyword:  # Sway Marks
+            subcmd = query[0] if len(query) >= 1 else None
+            should_show_subcmd = raw_query.endswith(" ")
 
-            if handle_marks.MARKS_CMD_MARK in query:
+            if subcmd == handle_marks.MARKS_CMD_MARK and should_show_subcmd:
                 mark = query[query.index(handle_marks.MARKS_CMD_MARK) + 1 :]
                 return handle_marks.collect_mark_name_for_window(mark)
 
-            if handle_marks.MARKS_CMD_UNMARK in query:
+            if subcmd == handle_marks.MARKS_CMD_UNMARK:
                 unmark = query[query.index(handle_marks.MARKS_CMD_UNMARK) + 1 :]
                 return handle_marks.unmark_window_selection(unmark)
 
