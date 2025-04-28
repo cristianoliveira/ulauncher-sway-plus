@@ -11,7 +11,7 @@
         {
             "id": "sway-windows",
             "type": "keyword",
-            "name": "Sway+",
+            "name": "Sway+  windows",
             "description": "Activates a window in Sway",
             "default_value": "w"
         },
@@ -21,6 +21,13 @@
             "name": "Sway+ marks",
             "description": "Manages marks in Sway",
             "default_value": "wm"
+        },
+        {
+            "id": "sway-workspaces",
+            "type": "keyword",
+            "name": "Sway+ workspaces",
+            "description": "Manages workspaces in Sway",
+            "default_value": "ws"
         },
         {
             "id": "sort_by",

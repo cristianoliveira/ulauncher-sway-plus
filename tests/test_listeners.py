@@ -1,13 +1,17 @@
+import pickle
 import unittest
 from unittest.mock import patch
 
 from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
+from ulauncher.api.shared.action.HideWindowAction import HideWindowAction
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
-from ulauncher.api.shared.event import KeywordQueryEvent
+from ulauncher.api.shared.event import ItemEnterEvent, KeywordQueryEvent
+from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 from ulauncher.search.Query import Query
 
 from handlers.marks import MARKS_ID
-from main import KeywordQueryEventListener, SwayWindowsExtension
+from handlers.workspaces import EVENT_SEND_TO_OUTPUT, HANDLER_ID
+from main import ItemEnterEventListener, KeywordQueryEventListener, SwayWindowsExtension
 
 
 class TestKeywordQueryEventListener(unittest.TestCase):
@@ -16,6 +20,7 @@ class TestKeywordQueryEventListener(unittest.TestCase):
         self.extension.preferences = {
             "sort_by": "default",
             MARKS_ID: "wm",
+            HANDLER_ID: "ws",
         }
 
     def test_subcommand_confirm_with_empty_space(self):
@@ -183,3 +188,53 @@ class TestKeywordQueryEventListener(unittest.TestCase):
 
             self.assertEqual(len(result.result_list), 2)
             self.assertEqual(result.result_list[0].get_name(), "[foo] bar")
+
+    def test_list_available_outputs(self):
+        input_text = "ws send"
+
+        listener = KeywordQueryEventListener()
+        key_event = KeywordQueryEvent(Query(input_text))
+
+        with patch("sway.workspaces.get_outputs") as get_outputs:
+            get_outputs.return_value = [
+                {"name": "output DP-1", "active": True},
+                {"name": "output DP-2", "active": True},
+            ]
+
+            result = listener.on_event(key_event, self.extension)
+            self.assertIsNotNone(result)
+            self.assertIsInstance(result, RenderResultListAction)
+
+            self.assertEqual(len(result.result_list), 2)
+            self.assertEqual(result.result_list[0].get_name(), "output DP-1")
+            self.assertEqual(result.result_list[1].get_name(), "output DP-2")
+            self.assertEqual(
+                result.result_list[0].get_description(""),
+                "Send current workspace to this output",
+            )
+
+            trigger = result.result_list[0].on_enter
+            # NOTE: ExtensionCustomAction isn't too open for testing
+            self.assertIsInstance(trigger(""), ExtensionCustomAction)
+            self.assertEqual(
+                pickle.loads(trigger("")._data),
+                (EVENT_SEND_TO_OUTPUT, {"name": "output DP-1", "active": True}),
+            )
+
+    def test_send_workspace_to_output(self):
+        event_data = pickle.dumps(
+            (EVENT_SEND_TO_OUTPUT, {"name": "output DP-1", "active": True})
+        )
+
+        listener = ItemEnterEventListener()
+        key_event = ItemEnterEvent(event_data)
+
+        with patch("sway.workspaces.send_workspace_to_output") as send_workspace:
+            send_workspace.return_value = None
+
+            result = listener.on_event(key_event, self.extension)
+            self.assertIsNotNone(result)
+            self.assertIsInstance(result, HideWindowAction)
+
+            # Check if send_workspace_to_output was called with the correct argument
+            send_workspace.assert_called_once_with("output DP-1")

@@ -7,6 +7,7 @@ gi.require_version("Gdk", "3.0")
 
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.client.Extension import Extension
+from ulauncher.api.shared.action.HideWindowAction import HideWindowAction
 from ulauncher.api.shared.event import (
     ItemEnterEvent,
     KeywordQueryEvent,
@@ -16,6 +17,7 @@ from ulauncher.api.shared.event import (
 
 import handlers.marks as handle_marks
 import handlers.windows as handle_windows
+import handlers.workspaces as handle_workspaces
 import sway.marks as sway_marks
 from utils.sorter import sort_strategy
 
@@ -56,9 +58,10 @@ class KeywordQueryEventListener(EventListener):
         query = raw_query.get_argument("").lower().split()
 
         event_keyword = event.get_keyword()
-        cmd_keyword = extension.preferences.get(handle_marks.MARKS_ID)
 
-        if event_keyword == cmd_keyword:  # Sway Marks
+        if event_keyword == extension.preferences.get(
+            handle_marks.MARKS_ID
+        ):  # Sway Marks
             ## pop first element in python list
             subcmd = None
 
@@ -79,6 +82,8 @@ class KeywordQueryEventListener(EventListener):
             return handle_marks.show_marked_windows_and_options(
                 extension, event_keyword, query
             )
+        elif event_keyword == extension.preferences.get(handle_workspaces.HANDLER_ID):
+            return handle_workspaces.handle(query, extension)
 
         else:
             return handle_windows.show_opened_windows(extension, query)
@@ -89,20 +94,23 @@ class ItemEnterEventListener(EventListener):
         (sub_cmd, args) = event.get_data()
 
         if sub_cmd == handle_marks.MARKS_EVENT_NAME:
-            handle_marks.collect_mark_name_for_window(args[0])
-            return
+            return handle_marks.collect_mark_name_for_window(args[0])
         if sub_cmd == handle_marks.MARKS_EVENT_CONFIRM:
             if isinstance(args, str):
                 raise ValueError("Expected a list of marks")
 
             sway_marks.mark(args)
-            return
+            return HideWindowAction()
         if sub_cmd == handle_marks.MARKS_EVENT_UNMARK:
             for mark in args["marks"]:
                 sway_marks.unmark(mark)
-            return
+            return HideWindowAction()
+
+        if handle_workspaces.is_workspace_event(sub_cmd):
+            return handle_workspaces.handle_event(sub_cmd, args)
 
         handle_windows.focus_selected_window(extension, args)
+        return HideWindowAction()
 
 
 if __name__ == "__main__":
