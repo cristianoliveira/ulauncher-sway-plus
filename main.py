@@ -16,6 +16,7 @@ from ulauncher.api.shared.event import (
 )
 
 import handlers.marks as handle_marks
+import handlers.outputs as handle_outputs
 import handlers.windows as handle_windows
 import handlers.workspaces as handle_workspaces
 import sway.marks as sway_marks
@@ -62,7 +63,6 @@ class KeywordQueryEventListener(EventListener):
         if event_keyword == extension.preferences.get(
             handle_marks.MARKS_ID
         ):  # Sway Marks
-            ## pop first element in python list
             subcmd = None
 
             if (
@@ -84,6 +84,9 @@ class KeywordQueryEventListener(EventListener):
             )
         elif event_keyword == extension.preferences.get(handle_workspaces.HANDLER_ID):
             return handle_workspaces.handle(query, extension)
+
+        elif event_keyword == extension.preferences.get(handle_outputs.HANDLER_ID):
+            return handle_outputs.handle(extension, query)
 
         else:
             return handle_windows.show_opened_windows(extension, query)
@@ -108,6 +111,11 @@ class ItemEnterEventListener(EventListener):
 
         if handle_workspaces.is_workspace_event(sub_cmd):
             return handle_workspaces.handle_event(sub_cmd, args)
+
+        if handle_outputs.HANDLER_ID in sub_cmd:
+            if isinstance(args, str):
+                raise ValueError("Expected a list of marks")
+            return handle_outputs.handle_selection(extension, sub_cmd, args)
 
         handle_windows.focus_selected_window(extension, args)
         return HideWindowAction()

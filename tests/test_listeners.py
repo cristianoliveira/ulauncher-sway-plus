@@ -9,9 +9,11 @@ from ulauncher.api.shared.event import ItemEnterEvent, KeywordQueryEvent
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 from ulauncher.search.Query import Query
 
+import handlers.outputs as handle_outputs
+import handlers.workspaces as handle_workspaces
 from handlers.marks import MARKS_ID
-from handlers.workspaces import EVENT_SEND_TO_OUTPUT, HANDLER_ID
 from main import ItemEnterEventListener, KeywordQueryEventListener, SwayWindowsExtension
+from tests.mocks import mock_keyword_query_event_input as mocked_input
 
 
 class TestKeywordQueryEventListener(unittest.TestCase):
@@ -20,7 +22,8 @@ class TestKeywordQueryEventListener(unittest.TestCase):
         self.extension.preferences = {
             "sort_by": "default",
             MARKS_ID: "wm",
-            HANDLER_ID: "ws",
+            handle_workspaces.HANDLER_ID: "ws",
+            handle_outputs.HANDLER_ID: "wo",
         }
 
     def test_subcommand_confirm_with_empty_space(self):
@@ -218,12 +221,18 @@ class TestKeywordQueryEventListener(unittest.TestCase):
             self.assertIsInstance(trigger(""), ExtensionCustomAction)
             self.assertEqual(
                 pickle.loads(trigger("")._data),
-                (EVENT_SEND_TO_OUTPUT, {"name": "output DP-1", "active": True}),
+                (
+                    handle_workspaces.EVENT_SEND_TO_OUTPUT,
+                    {"name": "output DP-1", "active": True},
+                ),
             )
 
     def test_send_workspace_to_output(self):
         event_data = pickle.dumps(
-            (EVENT_SEND_TO_OUTPUT, {"name": "output DP-1", "active": True})
+            (
+                handle_workspaces.EVENT_SEND_TO_OUTPUT,
+                {"name": "output DP-1", "active": True},
+            )
         )
 
         listener = ItemEnterEventListener()
@@ -238,3 +247,28 @@ class TestKeywordQueryEventListener(unittest.TestCase):
 
             # Check if send_workspace_to_output was called with the correct argument
             send_workspace.assert_called_once_with("output DP-1")
+
+    def test_enablin_disabling_outputs(self):
+        input_text = "wo "
+
+        listener = KeywordQueryEventListener()
+        key_event = KeywordQueryEvent(Query(input_text))
+
+        result = listener.on_event(key_event, self.extension)
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, RenderResultListAction)
+
+        self.assertEqual(len(result.result_list), 2)
+        self.assertEqual(result.result_list[0].get_name(), "Enable")
+        self.assertEqual(result.result_list[1].get_name(), "Disable")
+
+    def test_enablin_disabling_outputs_filtering(self):
+        input_text = "wo ena"
+
+        result = mocked_input(input_text, self.extension)
+
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, RenderResultListAction)
+
+        self.assertEqual(len(result.result_list), 1)
+        self.assertEqual(result.result_list[0].get_name(), "Enable")
