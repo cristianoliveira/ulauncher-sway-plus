@@ -6,10 +6,12 @@
 
 - name: quick checks
   run: 
+    - echo "{{relative_path}}" >> /tmp/files-changed
     - make test
     - make format
     - make lint
-    - git add {{relative_path}}
+    - xargs -I{} sh -c 'git add {} || true' < /tmp/files-changed
+    - echo "" > /tmp/files-changed
   change: '**/*.py'
   ignore:
     # ignore all python compiled files

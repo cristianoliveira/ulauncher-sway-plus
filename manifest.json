@@ -30,6 +30,13 @@
             "default_value": "ws"
         },
         {
+            "id": "sway-outputs",
+            "type": "keyword",
+            "name": "Sway+ outputs",
+            "description": "Enable/disable outputs (monitors)",
+            "default_value": "wo"
+        },
+        {
             "id": "sort_by",
             "type": "select",
             "name": "Sort matches by Most visited | Recent | None",
