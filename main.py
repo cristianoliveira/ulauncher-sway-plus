@@ -99,9 +99,6 @@ class ItemEnterEventListener(EventListener):
         if sub_cmd == handle_marks.MARKS_EVENT_NAME:
             return handle_marks.collect_mark_name_for_window(args[0])
         if sub_cmd == handle_marks.MARKS_EVENT_CONFIRM:
-            if isinstance(args, str):
-                raise ValueError("Expected a list of marks")
-
             sway_marks.mark(args)
             return HideWindowAction()
         if sub_cmd == handle_marks.MARKS_EVENT_UNMARK:
