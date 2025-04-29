@@ -48,7 +48,7 @@ def list_options(extension, query=[]):
     return filter_result_list(RenderResultListAction(items), query)
 
 
-def list_outputs(_, __=None, action=None):
+def list_outputs(_, query, action=None):
     """Lists all outputs (monitors), showing whether each is enabled or disabled."""
     outputs = sway_outputs.get_outputs(active=action != SUB_CMD_ENABLE)
     items = []
@@ -66,7 +66,7 @@ def list_outputs(_, __=None, action=None):
                 ),
             )
         )
-    return RenderResultListAction(items)
+    return filter_result_list(RenderResultListAction(items), query)
 
 
 def handle(extension, query):

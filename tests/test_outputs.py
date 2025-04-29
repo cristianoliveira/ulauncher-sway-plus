@@ -34,7 +34,7 @@ class TestOutputs(TestCase):
             ],
         ):
             fake_ext = mock.Mock()
-            result = houtputs.list_outputs(fake_ext)
+            result = houtputs.list_outputs(fake_ext, None)
             assert hasattr(
                 result, "result_list"
             ), "Result should have a result_list (RenderResultListAction)"
