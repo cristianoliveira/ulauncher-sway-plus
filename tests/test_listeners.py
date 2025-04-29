@@ -272,3 +272,18 @@ class TestKeywordQueryEventListener(unittest.TestCase):
 
         self.assertEqual(len(result.result_list), 1)
         self.assertEqual(result.result_list[0].get_name(), "Enable")
+
+    def test_output_enable_filter_by_name(self):
+        input_text = "wo enable DP-1"
+        with patch("handlers.outputs.sway_outputs") as so:
+            so.get_outputs.return_value = [
+                {"name": "DP-1", "active": True},
+                {"name": "DP-2", "active": True},
+                {"name": "eDP-1", "active": True},
+            ]
+            result = mocked_input(input_text, self.extension)
+
+            self.assertIsNotNone(result)
+            self.assertIsInstance(result, RenderResultListAction)
+
+            self.assertEqual(len(result.result_list), 2)
