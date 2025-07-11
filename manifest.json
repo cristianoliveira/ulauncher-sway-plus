@@ -23,6 +23,13 @@
             "default_value": "wm"
         },
         {
+            "id": "sway-scratchpad",
+            "type": "keyword",
+            "name": "Sway+ scratchpad",
+            "description": "Lists windows in the scratchpad",
+            "default_value": "wc"
+        },
+        {
             "id": "sway-workspaces",
             "type": "keyword",
             "name": "Sway+ workspaces",

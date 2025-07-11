@@ -47,6 +47,35 @@ def show_opened_windows(extension, query: List[str]):
     return filter_result_list(RenderResultListAction(items), query)
 
 
+SCRATCHPAD_HANDLER_ID = "sway-scratchpad"
+
+
+def show_scratchpad_windows(extension, query: List[str]):
+    """
+    Show the most used windows in the scratchpad
+
+    :param extension: The extension instance
+    :param query: The search query
+    :return: The list of scratchpad windows
+    """
+
+    scratchpads = windows.get_windows_by_workspace("__i3_scratch")
+    most_used_windows = extension.sorter.sort(scratchpads, by_key="app_id")
+
+    items = list(
+        [
+            get_result_item(w)
+            for w in most_used_windows
+            # Don't include the ulauncher dialog in the list,
+            # since it already has focus
+            if not w["focused"]
+        ]
+    )
+
+    # Sort the items by usage
+    return filter_result_list(RenderResultListAction(items), query)
+
+
 def focus_selected_window(extension, con: dict[str, str]):
     """
     Focus the selected window and add it to the sorter
