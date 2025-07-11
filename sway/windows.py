@@ -87,6 +87,30 @@ def get_windows(tree=None):
     return windows
 
 
+def get_windows_by_workspace(workspace_name):
+    """
+    Get all windows in the specified workspace.
+    :param workspace_name: The name of the workspace to search.
+    :return: A list of windows in the specified workspace.
+    """
+    tree = get_tree_object()
+    windows = []
+    for output in tree["nodes"]:
+        for workspace in output["nodes"]:
+            assert workspace["type"] == "workspace", "Expected workspace, got" + repr(
+                workspace
+            )
+
+            if workspace["name"] == workspace_name:
+                for container in get_child_or_else(workspace, "nodes", []):
+                    windows += get_container_windows(container)
+
+                for container in get_child_or_else(workspace, "floating_nodes", []):
+                    windows += get_container_windows(container)
+
+    return windows
+
+
 def get_container_windows(con):
     windows = []
 

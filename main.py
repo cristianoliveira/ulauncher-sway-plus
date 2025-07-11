@@ -88,6 +88,11 @@ class KeywordQueryEventListener(EventListener):
         elif event_keyword == extension.preferences.get(handle_outputs.HANDLER_ID):
             return handle_outputs.handle(extension, query)
 
+        elif event_keyword == extension.preferences.get(
+            handle_windows.SCRATCHPAD_HANDLER_ID
+        ):
+            return handle_windows.show_scratchpad_windows(extension, query)
+
         else:
             return handle_windows.show_opened_windows(extension, query)
 
