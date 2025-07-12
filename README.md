@@ -29,6 +29,11 @@ This repo contains a [Ulauncher](https://ulauncher.io) extension for managing [S
  - [x] Unmark the current windows
  - [x] List and focus by marked windows
 
+### Output Management
+
+ - [x] Enable an output
+ - [x] Disable an output
+
 ### Workspace Management
 
  - [x] Move selected window to a workspace
