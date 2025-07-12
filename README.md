@@ -36,9 +36,8 @@ This repo contains a [Ulauncher](https://ulauncher.io) extension for managing [S
 
 ### Workspace Management
 
- - [x] Move selected window to a workspace
- - [x] List windows by workspace
-
+ - [x] Move current workspace to a given output
+       
 ### Scratchpad Management
 
  - [x] List scratchpad windows
