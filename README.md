@@ -29,10 +29,14 @@ This repo contains a [Ulauncher](https://ulauncher.io) extension for managing [S
  - [x] Unmark the current windows
  - [x] List and focus by marked windows
 
-### Future implementations
+### Workspace Management
 
- - [ ] Move selected window to a workspace
- - [ ] List windows by workspace
+ - [x] Move selected window to a workspace
+ - [x] List windows by workspace
+
+### Scratchpad Management
+
+ - [x] List scratchpad windows
 
 ## Development
 
