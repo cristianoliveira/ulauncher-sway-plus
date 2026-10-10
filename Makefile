@@ -4,6 +4,10 @@ help: ## Lists the available commands. Add a comment with '##' to describe a com
 		| sort\
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+.PHONY: install
+install: ## Install extension for the current user without overwriting an existing install.
+	./install.sh
+
 .PHONY: setup
 setup: ## Setup extension in ~/.local/share/ulauncher/extensions/
 	ln -sf $(shell pwd) ~/.local/share/ulauncher/extensions/

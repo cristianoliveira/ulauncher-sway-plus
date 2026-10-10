@@ -84,6 +84,9 @@ cd ulauncher-sway-plus
 ./install.sh
 ```
 
+Alternatively, run `make install` from the repository root; it calls the same
+installer and requires Make.
+
 Run without `sudo`. The script copies runtime files to
 `${XDG_DATA_HOME:-$HOME/.local/share}/ulauncher/extensions/com.github.cristianoliveira.ulauncher-sway-plus`.
 It works from any current directory, leaves the checkout independent, and refuses
