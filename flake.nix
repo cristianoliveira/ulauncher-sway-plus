@@ -7,11 +7,17 @@
   };
 
   outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
+    {
+      homeManagerModules.default = import ./nix/home-manager.nix;
+    } // flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (system:
       let
         pkgs = import nixpkgs { inherit system; };
       in
       {
+        packages.default = pkgs.callPackage ./nix/package.nix { };
+        packages.ulauncher-sway-plus = self.packages.${system}.default;
+        checks.install = self.packages.${system}.default;
+
         devShells.default = pkgs.mkShell {
 
           ULAUNCHER_WS_API="ws://127.0.0.1:5054/ulauncher-sway-plus";
