@@ -27,15 +27,20 @@ def get_icon(con):
             icon_loader(get_child_or_else(props, "instance", None)),
         ]
 
-    # Try matching on executable name, for cases where app_id is wrong
-    # e.g. firefox-wayland
-    pid = con["pid"]
-    exePath = os.readlink(f"/proc/{pid}/exe")
-    suppliers.append(icon_loader(os.path.basename(exePath)))
-
     # Evaluate suppliers lazily, returning the first successful one
     for f in suppliers:
         res = f()
+        if res is not None:
+            return res
+
+    # Try the executable only when application identifiers have no icon.
+    # Sandboxed processes may deny access; closed windows may have no process.
+    try:
+        exe_path = os.readlink(f"/proc/{con['pid']}/exe")
+    except OSError as error:
+        logger.debug("Unable to read executable for container %s: %s", con["id"], error)
+    else:
+        res = icon_loader(os.path.basename(exe_path))()
         if res is not None:
             return res
 
